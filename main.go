@@ -9,4 +9,7 @@ func main() {
 
 	fmt.Println("Marketplace API")
 	fmt.Println("Extra information")
+	for i := 1; i <= 10; i++ {
+		fmt.Println(i)
+	}
 }
