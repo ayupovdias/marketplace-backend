@@ -1,15 +1,20 @@
 package main
 
-import "fmt"
+import (
+	"marketplace/configs"
+	"marketplace/models"
+	"marketplace/routes"
 
-//TIP <p>To run your code, right-click the code and select <b>Run</b>.</p> <p>Alternatively, click
-// the <icon src="AllIcons.Actions.Execute"/> icon in the gutter and select the <b>Run</b> menu item from here.</p>
+	"github.com/gin-gonic/gin"
+)
 
 func main() {
+	r := gin.Default()
 
-	fmt.Println("Marketplace API")
-	fmt.Println("Extra information")
-	for i := 1; i <= 10; i++ {
-		fmt.Println(i)
-	}
+	config.ConnectDB()
+	config.DB.AutoMigrate(&models.Ad{})
+
+	routes.SetupRoutes(r)
+
+	r.Run(":8080")
 }
