@@ -26,7 +26,10 @@ func GetAd(c *gin.Context) {
 func CreateAd(c *gin.Context) {
 	var ad models.Ad
 	c.BindJSON(&ad)
-
+	if ad.Price < 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "price is negative"})
+		return
+	}
 	config.DB.Create(&ad)
 	c.JSON(201, ad)
 }
@@ -37,7 +40,10 @@ func UpdateAd(c *gin.Context) {
 		c.JSON(404, gin.H{"error": "Not found"})
 		return
 	}
-
+	if ad.Price < 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "price is negative"})
+		return
+	}
 	c.BindJSON(&ad)
 	config.DB.Save(&ad)
 
@@ -79,7 +85,10 @@ func UpdatePrice(c *gin.Context) {
 		Price int
 	}
 	c.BindJSON(&body)
-
+	if ad.Price < 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "price is negative"})
+		return
+	}
 	ad.Price = body.Price
 	config.DB.Save(&ad)
 

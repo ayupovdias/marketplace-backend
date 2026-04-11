@@ -12,7 +12,7 @@ func main() {
 	r := gin.Default()
 
 	config.ConnectDB()
-	config.DB.AutoMigrate(&models.Ad{})
+	config.DB.AutoMigrate(&models.Ad{}, &models.User{})
 
 	routes.SetupRoutes(r)
 
