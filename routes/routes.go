@@ -11,9 +11,13 @@ func SetupRoutes(r *gin.Engine) {
 
 	r.GET("/ads", controllers.GetAds)
 	r.GET("/ads/:id", controllers.GetAd)
-	r.POST("/ads", controllers.CreateAd)
-	r.PUT("/ads/:id", controllers.UpdateAd)
-	r.DELETE("/ads/:id", controllers.DeleteAd)
+	
+	auth := r.Group("/")
+	auth.Use(middlewares.AuthMiddleware())
+
+	auth.POST("/ads", controllers.CreateAd)
+	auth.PUT("/ads/:id", controllers.UpdateAd)
+	auth.DELETE("/ads/:id", controllers.DeleteAd)
 
 	r.GET("/ads/city/:city", controllers.GetByCity)
 	r.GET("/ads/price/:min/:max", controllers.GetByPrice)
@@ -23,7 +27,6 @@ func SetupRoutes(r *gin.Engine) {
 
 	r.GET("/users", controllers.GetUsers)
 	r.GET("/user/:id", controllers.GetUser)
-	r.POST("/user", controllers.CreateUser)
 	r.PUT("/user/:id", controllers.UpdateUser)
 	r.DELETE("/user/:id", controllers.DeleteUser)
 

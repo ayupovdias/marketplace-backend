@@ -21,15 +21,6 @@ func GetUser(c *gin.Context) {
 	}
 	c.JSON(200, user)
 }
-
-func CreateUser(c *gin.Context) {
-	var user models.User
-	c.BindJSON(&user)
-
-	config.DB.Create(&user)
-	c.JSON(201, user)
-}
-
 func UpdateUser(c *gin.Context) {
 	var user models.User
 
@@ -38,7 +29,7 @@ func UpdateUser(c *gin.Context) {
 		return
 	}
 
-	c.BindJSON(&user)
+	c.ShouldBindJSON(&user)
 	config.DB.Save(&user)
 
 	c.JSON(200, user)

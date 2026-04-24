@@ -25,33 +25,57 @@ func GetAd(c *gin.Context) {
 
 func CreateAd(c *gin.Context) {
 	var ad models.Ad
-	c.BindJSON(&ad)
-	if ad.Price < 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "price is negative"})
+
+	if err := c.ShouldBindJSON(&ad); err != nil {
+		c.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
+
+	userID, _ := c.Get("user_id")
+	ad.UserID = userID.(uint)
+
 	config.DB.Create(&ad)
 	c.JSON(201, ad)
 }
-
 func UpdateAd(c *gin.Context) {
 	var ad models.Ad
+
 	if err := config.DB.First(&ad, c.Param("id")).Error; err != nil {
 		c.JSON(404, gin.H{"error": "Not found"})
 		return
 	}
-	if ad.Price < 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "price is negative"})
+
+	userID, _ := c.Get("user_id")
+
+	if ad.UserID != userID.(uint) {
+		c.JSON(403, gin.H{"error": "Forbidden"})
 		return
 	}
-	c.BindJSON(&ad)
-	config.DB.Save(&ad)
 
+	if err := c.ShouldBindJSON(&ad); err != nil {
+		c.JSON(400, gin.H{"error": err.Error()})
+		return
+	}
+
+	config.DB.Save(&ad)
 	c.JSON(200, ad)
 }
-
 func DeleteAd(c *gin.Context) {
-	config.DB.Delete(&models.Ad{}, c.Param("id"))
+	var ad models.Ad
+
+	if err := config.DB.First(&ad, c.Param("id")).Error; err != nil {
+		c.JSON(404, gin.H{"error": "Not found"})
+		return
+	}
+
+	userID, _ := c.Get("user_id")
+
+	if ad.UserID != userID.(uint) {
+		c.JSON(403, gin.H{"error": "Forbidden"})
+		return
+	}
+
+	config.DB.Delete(&ad)
 	c.JSON(200, gin.H{"message": "Deleted"})
 }
 func GetByCity(c *gin.Context) {

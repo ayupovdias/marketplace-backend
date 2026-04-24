@@ -1,10 +1,9 @@
 package middlewares
 
 import (
-	"net/http"
-
 	"github.com/gin-gonic/gin"
-	"github.com/golang-jwt/jwt/v5"
+	"marketplace/utils"
+	"net/http"
 )
 
 var jwtKey = []byte("secret")
@@ -12,7 +11,7 @@ var jwtKey = []byte("secret")
 func AuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 
-		tokenString := c.GetHeader("Authorization")
+		tokenString := utils.ExtractToken(c.GetHeader("Authorization"))
 
 		if tokenString == "" {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Missing token"})
@@ -20,22 +19,16 @@ func AuthMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-			return jwtKey, nil
-		})
-
-		if err != nil {
-			c.JSON(401, gin.H{"error": "Invalid token"})
+		token, claims, err := utils.ValidateToken(tokenString)
+		if err != nil || !token.Valid {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
 			c.Abort()
 			return
 		}
 
-		if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-			c.Set("username", claims["username"])
-			c.Next()
-		} else {
-			c.JSON(401, gin.H{"error": "Invalid token"})
-			c.Abort()
-		}
+		c.Set("user_id", uint(claims["user_id"].(float64)))
+		c.Set("username", claims["username"])
+
+		c.Next()
 	}
 }
