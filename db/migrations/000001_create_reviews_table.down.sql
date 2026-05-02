@@ -1,1 +1,1 @@
-DROP TABLE reviews;
+DROP table reviews;

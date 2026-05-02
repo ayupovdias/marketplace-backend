@@ -12,5 +12,5 @@ migrate-force:
 migrate-version:
 	migrate -path ./db/migrations -database "$(DB_URL)" version
 
-create-migration:
+migrate-create:
 	migrate create -ext sql -dir ./db/migrations -seq $(name)

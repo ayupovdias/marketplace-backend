@@ -8,3 +8,4 @@ CREATE TABLE reviews(
                         FOREIGN KEY (reviewed_user_id) REFERENCES users(id) ON DELETE CASCADE,
                         CHECK (reviewer_id <> reviewed_user_id)
 );
+
