@@ -1,0 +1,30 @@
+
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: marketplace-db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: marketplace
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  auth-service:
+    build:
+      context: ./auth-service
+    container_name: auth-service
+    restart: always
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    env_file:
+      - ./auth-service/.env
+
+volumes:
+  postgres_data:
