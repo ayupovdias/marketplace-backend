@@ -2,15 +2,15 @@
 
 services:
   postgres:
-    image: postgres:16
+    image: postgres:17-alpine
     container_name: marketplace-db
     restart: always
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: marketplace
+      POSTGRES_DB: market11
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
@@ -26,5 +26,28 @@ services:
     env_file:
       - ./auth-service/.env
 
+  marketplace-service:
+    build:
+      context: ./marketplace-service
+    container_name: marketplace-service
+    restart: always
+    ports:
+      - "8081:8081"
+    depends_on:
+      - postgres
+    env_file:
+      - ./marketplace-service/.env
+
+  notification-service:
+    build:
+      context: ./notification-service
+    container_name: notification-service
+    restart: always
+    ports:
+      - "8082:8082"
+    depends_on:
+      - postgres
+    env_file:
+      - ./notification-service/.env
 volumes:
   postgres_data:

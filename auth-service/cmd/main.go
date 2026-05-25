@@ -15,11 +15,9 @@ func main() {
 
 	db := database.Connect(cfg)
 
-	_ = db
-
 	router := gin.Default()
 
-	routes.SetupRoutes(router)
+	routes.SetupRoutes(router, db)
 
 	log.Println("Server running on port", cfg.Port)
 
